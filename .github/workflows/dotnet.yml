@@ -1,0 +1,35 @@
+name: .NET Build and Test
+
+# 1. Trigger on push events to the main branch
+on:
+  push:
+    branches: [ main ] # This is the branch the workflow monitors
+
+jobs:
+  build_and_test_app:
+    # 2. Use an Ubuntu runner
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 3. Set up .NET SDK
+    - name: Setup .NET 9.x SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.x'
+        
+    # 4. Restore dependencies
+    - name: Restore Dependencies
+      run: dotnet restore
+
+    # 5. Build the application
+    - name: Build Application
+      # The '--no-restore' flag speeds up the build by skipping dependency restore
+      run: dotnet build --configuration Release --no-restore
+
+    # 6. Test the application
+    - name: Run Tests
+      # The '--no-build' flag speeds up testing by using the existing build output
+      run: dotnet test --no-build
